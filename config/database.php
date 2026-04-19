@@ -1,21 +1,33 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $db_name = "ma_banque";
-    private $username = "root";
-    private $password = "";
 
-    public function connect() {
+    private $host = "mysql.railway.internal";       
+    private $db_name = "railway";    
+    private $username = "root";   
+    private $password = "jQDEEwMxChSGhEMZihAWZrxtYCjewDVQ";   
+    private $port = "3306";
+
+    public $conn;
+
+    public function getConnection() {
+        $this->conn = null;
+
         try {
-            $conn = new PDO(
-                "mysql:host=$this->host;dbname=$this->db_name",
-                $this->username,
-                $this->password
-            );
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $conn;
-        } catch(PDOException $e) {
-            die("Erreur DB: " . $e->getMessage());
+            $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset=utf8mb4";
+
+            $this->conn = new PDO($dsn, $this->username, $this->password);
+
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        } catch(PDOException $exception) {
+            echo json_encode([
+                "error" => "Connexion echouee",
+                "message" => $exception->getMessage()
+            ]);
+            exit();
         }
+
+        return $this->conn;
     }
 }
+?>
